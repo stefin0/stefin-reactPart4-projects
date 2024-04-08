@@ -6,7 +6,6 @@ import { setDoc, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import { notesCollection, db } from "./firebase";
 import "./style.css";
 
-
 // ended on part 26
 
 export default function App() {
@@ -44,7 +43,16 @@ export default function App() {
     if (currentNote) {
       setTempNoteText(currentNote.body);
     }
-  }, [currentNote])
+  }, [currentNote]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (tempNoteText !== currentNote.body) {
+        updateNote(tempNoteText);
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [tempNoteText]);
 
   async function createNewNote() {
     const newNote = {
@@ -81,7 +89,10 @@ export default function App() {
             newNote={createNewNote}
             deleteNote={deleteNote}
           />
-          <Editor tempNoteText={tempNoteText} setTempNoteText={setTempNoteText} />
+          <Editor
+            tempNoteText={tempNoteText}
+            setTempNoteText={setTempNoteText}
+          />
         </Split>
       ) : (
         <div className="no-notes">
